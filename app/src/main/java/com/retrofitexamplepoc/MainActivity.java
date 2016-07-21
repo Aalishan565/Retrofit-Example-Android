@@ -1,5 +1,6 @@
 package com.retrofitexamplepoc;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -26,16 +27,27 @@ public class MainActivity extends AppCompatActivity implements Callback<StackOve
 
     private ListView mListData;
     ArrayAdapter<Question> arrayAdapter;
+    ProgressDialog progress;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+         progress = new ProgressDialog(this);
         mListData = (ListView) findViewById(R.id.listView);
 
 
     }
 
     public void loadData(View view) {
+
+
+        progress.setCancelable(true);
+        progress.setMessage("Data downloading ...");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setProgress(0);
+        progress.setMax(100);
+        progress.show();
+
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                 .create();
@@ -55,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements Callback<StackOve
 
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, response.body().items);
         mListData.setAdapter(arrayAdapter);
+        progress.dismiss();
         Log.d("Data",response.toString());
     }
 
